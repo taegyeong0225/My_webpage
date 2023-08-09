@@ -4,7 +4,7 @@ def index(request):
 
     return render(
         request,
-        'single_pages/single_post_page.html',
+        'single_pages/post_detail.html',
     )
 
 def landing(request):
