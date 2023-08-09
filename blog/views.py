@@ -1,18 +1,27 @@
 from django.shortcuts import render
 from .models import Post
 
-def index(request):
-    posts = Post.objects.all().order_by('-pk')
+from django.views.generic import ListView
 
-    # QuerySet 출력
-    # print(posts)
+class PostList(ListView):
+    # Generic view > generic display view > ListView
+    model = Post
+    # template_name = 'blog/post_list.html', 안 적어주면 모델_list.html로 인식
+    ordering = '-pk'
 
-    return render(
-        request,
-        'blog/index.html', {
-            'posts': posts
-        }
-    )
+# FBV 방식
+# def index(request):
+#     posts = Post.objects.all().order_by('-pk')
+
+#     # QuerySet 출력
+#     # print(posts)
+
+#     return render(
+#         request,
+#         'blog/post_list.html', {
+#             'posts': posts
+#         }
+#     )
 
 def single_post_page(request, pk):
     post = Post.objects.get(pk=pk)
