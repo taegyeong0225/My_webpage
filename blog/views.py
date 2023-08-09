@@ -19,6 +19,6 @@ def single_post_page(request, pk):
     return render(
         request,
         'blog/single_post_page.html', {
-            'posts': post,
+            'post': post,
         }
     )
