@@ -138,7 +138,7 @@
                 <!-- Blog post-->
                 {% for p in post_list %}
                 <div class="card mb-4">
-                    <a href="#"><img class="card-img-top" src="http://placehold.it/750x300" alt="card image cap" /></a>
+                    <a href="#"><img class="card-img-top" src="{{ p.head_image.url }}" alt="Card image cap" /></a>
                     <div class="card-body">
                         <div class="small text-muted">{{ p.created_at }}</div>
                         <h2 class="card-title">{{ p.title }}</h2>
