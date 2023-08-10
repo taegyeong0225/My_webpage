@@ -33,7 +33,7 @@
                 <a class="nav-link active" aria-current="page" href="./index.html">Home</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="./about_me.html">about me</a>
+                <a class="nav-link" href="./about_me.html">About me</a>
               </li>
               <li class="nav-item">
                 <a class="nav-link" href="./blog_list.html">Blog</a>
@@ -132,10 +132,10 @@
                 </div>
             </div>
 
-            <div class="col-md-8 col-lg-9">
+            <div class="col-md-8 col-lg-9" id="main-area">
                 <h1>Blog</h1>
-
                 <!-- Blog post-->
+            {% if post_list.exists %}
                 {% for p in post_list %}
                 <div class="card mb-4">
                     {% if p.head_image %}
@@ -158,6 +158,9 @@
                     </div>
                 </div>
                 {% endfor %}
+            {% else %}
+                <h3>아직 게시물이 없습니다</h3>
+            {% endif %}
 
                 <!-- 네비게이션 바 -->
                 <nav aria-label="Page navigation example">
