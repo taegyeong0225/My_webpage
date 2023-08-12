@@ -10,7 +10,7 @@ class PostList(ListView):
     # 안 적어주면 모델_list.html로 인식, 파일명을 변경함
     ordering = '-pk'
 
-    # get_context_data 오버라이딩
+    # get_context_data 오버라이딩, 카테고리 파트 데이터 get
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super(PostList, self).get_context_data()
         context['categories'] = Category.objects.all()
@@ -43,3 +43,9 @@ class PostDetail(DetailView):
     #         'post': post,
     #     }
     # )
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super(PostDetail, self).get_context_data()
+        context['categories'] = Category.objects.all()
+        context['no_category_post_count'] = Post.objects.filter(category=None).count()
+
+        return context

@@ -2,10 +2,16 @@
 
 {% block head_title %}
     {{ post.title }} - Blog
-{% endblock%}
+{% endblock %}
 
 {% block main_area %}
 <div id="post-area">
+    <!-- 카테고리 부분 -->
+        {% if post.category %}
+            <span class="badge-secondary float-right">{{ post.category }}</span>
+        {% else %}
+            <span class="badge-secondary float-right">미분류</span>
+        {% endif %}
     <!-- Post content-->
     <article>
         <!-- Post header-->
@@ -17,7 +23,6 @@
                 Posted on {{ post.created_at }} by
                 <a href="#">{{ post.author|upper }}</a>
             </span>
-
 
             {% if post.hook_text %}
             <h5 class="text-muted">{{ post.hook_text }}</h5>

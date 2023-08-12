@@ -13,6 +13,7 @@
     {% endif %}
     <div class="card-body">
         <div class="small text-muted">{{ p.created_at }}</div>
+        <!-- 카테고리 부분 -->
         {% if p.category %}
             <span class="badge-secondary float-right">{{ p.category }}</span>
         {% else %}
