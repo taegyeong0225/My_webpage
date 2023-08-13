@@ -13,6 +13,7 @@
     {% endif %}
     <div class="card-body">
         <div class="small text-muted">{{ p.created_at }}</div>
+<<<<<<< HEAD
         <!-- 카테고리 부분 -->
         {% if p.category %}
             {% if Category.slug == p.category %}
@@ -22,6 +23,10 @@
             {% endif %}
         <!-- 나중에 !! 선택된 것은 다른 스타일이 적용되는 코드 넣기 -->
 
+=======
+        {% if p.category %}
+            <span class="badge-secondary float-right">{{ p.category }}</span>
+>>>>>>> origin/main
         {% else %}
             <span class="badge-secondary float-right">미분류</span>
         {% endif %}
