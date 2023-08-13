@@ -4,6 +4,9 @@
 <h1>Blog {% if category  %}<span class="badge bg-secondary">{{ category }}</span>{% endif %}</h1>
 <!-- Blog post-->
 {% if post_list.exists %}
+<!-- FBV 방식
+     190p index() 함수에서 Post.objects.all()함수로 가져온 Post 레코드를 posts 딕셔너리로 명명
+     index() 함수는 blog/views.py에 정의되어 있음 -->
 {% for p in post_list %}
 <div class="card mb-4" id="post-{{ p.pk }}">
     {% if p.head_image %}
@@ -13,28 +16,30 @@
     {% endif %}
     <div class="card-body">
         <div class="small text-muted">{{ p.created_at }}</div>
-<<<<<<< HEAD
         <!-- 카테고리 부분 -->
         {% if p.category %}
-            {% if Category.slug == p.category %}
-                <span class="badge-secondary float-right" style="color: pink">{{ p.category }}</span>
-            {% else %}
-                <span class="badge-secondary float-right">{{ p.category }}</span>
-            {% endif %}
-        <!-- 나중에 !! 선택된 것은 다른 스타일이 적용되는 코드 넣기 -->
-
-=======
-        {% if p.category %}
             <span class="badge-secondary float-right">{{ p.category }}</span>
->>>>>>> origin/main
         {% else %}
             <span class="badge-secondary float-right">미분류</span>
         {% endif %}
+
         <h2 class="card-title">{{ p.title }}</h2>
         {% if p.hook_text %}
         <h5 class="text-muted">{{ p.hook_text }}</h5>
         {% endif %}
         <p class="card-text">{{ p.content | truncatewords:45 }}</p>
+
+        <!-- 태그 추가 -->
+        {% if p.tags.exists %}
+            <i class="fas fa-tags"></i>
+            {% for tag in p.tags.iterator %}
+            <a href="{{ tag.get_absolute_url }}"><span class="badge badge-pill badge-light" style="color: black;">{{ tag }}</span></a>
+            {% endfor %}
+            <br/>
+            <br/>
+        {% endif %}
+
+
         <a class="btn btn-primary" href="{{ p.get_absolute_url }}">Read more →</a>
     </div>
     <div class="card-footer text-muted">

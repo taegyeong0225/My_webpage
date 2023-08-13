@@ -24,10 +24,6 @@
                 <a href="#">{{ post.author|upper }}</a>
             </span>
 
-<<<<<<< HEAD
-=======
-
->>>>>>> origin/main
             {% if post.hook_text %}
             <h5 class="text-muted">{{ post.hook_text }}</h5>
             {% endif %}
@@ -45,6 +41,17 @@
         <section class="mb-5">
             {{ post.content }}
         </section>
+
+        <!-- 태그 추가 -->
+        {% if post.tags.exists %}
+            <i class="fas fa-tags"></i>
+            {% for tag in post.tags.iterator %}
+            <a href="{{ tag.get_absolute_url }}"><span class="badge badge-pill badge-light" style="color: black;">{{ tag }}</span></a>
+            {% endfor %}
+            <br/>
+            <br/>
+        {% endif %}
+
         <!-- add file upload button-->
         {% if post.file_upload %}
         <a href="{{ post.file_upload.url }}" class="btn btn-outline-dark" role="button" download style="margin-bottom:10px">
@@ -53,7 +60,7 @@
             <i class="fa-regular fa-file-csv"></i>
             {% elif post.get_file_ext == 'xlsx' or post.get_file_ext == 'xls' %}
             <i class="fa-regular fa-file-excel"></i>
-            {% elif post.get_file_ext == 'docx' or post.get_file_ext == 'doc' or post.get_file_ext == 'hwp'%}
+            {% elif post.get_file_ext == 'docx' or post.get_file_ext == 'doc' or post.get_file_ext == 'hwp' %}
             <i class="fa-regular fa-file-word"></i>
             {% else %}
             <i class="fa-regular fa-file"></i>
