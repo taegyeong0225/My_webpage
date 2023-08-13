@@ -7,7 +7,13 @@ from django.contrib.auth.models import User
 # Create your tests here.
 class TestView(TestCase):
     def setUp(self):
-        # 기본적으로 설정되어야 하는 내용, Client()를 사용하겠다.
+        '''
+        기본적으로 설정되어야 하는 내용을 적는 함수
+        Client() 사용
+        user, category 설정
+        포스트 3개 작성
+        :return:
+        '''
         self.client = Client()
         self.user_obama = User.objects.create_user(username='obama', password='somepassword')
         self.user_trump = User.objects.create_user(username='trumps', password='somepassword')
@@ -33,32 +39,11 @@ class TestView(TestCase):
             author=self.user_trump,
         )
 
-
-    def category_card_test(self, soup):
-        categories_card = soup.find('div', id='categories-card')
-        self.assertIn('Categories', categories_card.text)
-        self.assertIn(f'{self.category_programming.name} ({self.category_programming.post_set.count()})', categories_card.text)
-        self.assertIn(f'{self.category_java.name} ({self.category_java.post_set.count()})', categories_card.text)
-        self.assertIn(f'미분류 (1)', categories_card.text)
-
-    def navbar_test(self, soup):
-        navBar = soup.nav
-        self.assertIn('Blog', navBar.text)
-        self.assertIn('About me', navBar.text)
-
-        logo_btn = navBar.find('a', text='태경의 웹 패이지')
-        self.assertEqual(logo_btn.attrs['href'], '/')
-
-        home_btn = navBar.find('a', text='Home')
-        self.assertEqual(home_btn.attrs['href'], '/')
-
-        blog_btn = navBar.find('a', text='Blog')
-        self.assertEqual(blog_btn.attrs['href'], '/blog/')
-
-        about_me_btn = navBar.find('a', text='About me')
-        self.assertEqual(about_me_btn.attrs['href'], '/about_me/')
-
     def test_post_list(self):
+        '''
+        포스트 리스트에 포스트가 제대로 있는지 확인
+        :return:
+        '''
         # 포스트가 있는 경우
         self.assertEqual(Post.objects.count(), 3)
 
@@ -96,7 +81,16 @@ class TestView(TestCase):
         soup = BeautifulSoup(response.content, 'html.parser')
         main_area = soup.find('div', id='main-area')
         self.assertIn('아직 게시물이 없습니다', main_area.text)
+
+
     def test_post_detail(self):
+        '''
+        포스트 디테일
+        url에 제대로 접근되는지 확인
+        리스트 목록 페이지와 똑같은 내비게이션 바
+        등등등....
+        :return:
+        '''
         # 1.2 그 포스트의 url은 '/blog/1/' 이다
         self.assertEqual(self.post_001.get_absolute_url(), '/blog/1/')
 
@@ -119,4 +113,69 @@ class TestView(TestCase):
         self.assertIn(self.user_obama.username.upper(), post_area.text)
         # 2.6 첫 번째 포스트의 내용(content)이 포스트 영역에 있다
         self.assertIn(self.post_001.content, post_area.text)
+
+    def test_category_page(self):
+        '''
+        338p 카테고리 페이지
+        get_absolute_url() : 모델에 정의됨
+        1. 응답하는지 확인
+        2. 파싱해서 저장 및 내가 설정한 카테고리명이 카테고리 카드에 있는지 확인
+        3. 제목에 카테고리가 있는지 확인
+        4. 메인 파트에 카테고리 이름과 포스트 제목이 잘 있는지 확인
+        :return:
+        '''
+        response = self.client.get(self.category_programming.get_absolute_url())
+        self.assertEqual(response.status_code, 200)
+        soup = BeautifulSoup(response.content, 'html.parser')
+
+        self.navbar_test(soup)
+        self.category_card_test(soup)
+
+        self.assertIn(self.category_programming.name, soup.h1.text)
+
+        main_area = soup.find('div', id='main-area')
+        self.assertIn(self.category_programming.name, main_area.text)
+        self.assertIn(self.post_001.title, main_area.text)
+        self.assertNotIn(self.post_002.title, main_area.text)
+        self.assertNotIn(self.post_003.title, main_area.text)
+
+    def category_card_test(self, soup):
+        '''
+        내가 설정한 카테고리명이 카테고리 카드에 있는지 확인
+        soup = BeautifulSoup(response.content, 'html.parser') html 요소를 파싱에서 soup에 담음
+        response = self.client.get('/blog/')
+        :param soup:
+        :return:
+        '''
+        categories_card = soup.find('div', id='categories-card')
+        self.assertIn('Categories', categories_card.text)
+        self.assertIn(f'{self.category_programming.name} ({self.category_programming.post_set.count()})', categories_card.text)
+        self.assertIn(f'{self.category_java.name} ({self.category_java.post_set.count()})', categories_card.text)
+        self.assertIn(f'미분류 (1)', categories_card.text)
+
+    def navbar_test(self, soup):
+        '''
+        파싱해서 담은 nav 요소를 navBar에 담음
+        제대로 있는지 확인
+        요소 이름을 찾고 그 요소가 잘 이동하고 있는지 확인
+        :param soup:
+        :return:
+        '''
+        navBar = soup.nav
+        self.assertIn('Blog', navBar.text)
+        self.assertIn('About me', navBar.text)
+
+        logo_btn = navBar.find('a', text='태경의 웹 패이지')
+        self.assertEqual(logo_btn.attrs['href'], '/')
+
+        home_btn = navBar.find('a', text='Home')
+        self.assertEqual(home_btn.attrs['href'], '/')
+
+        blog_btn = navBar.find('a', text='Blog')
+        self.assertEqual(blog_btn.attrs['href'], '/blog/')
+
+        about_me_btn = navBar.find('a', text='About me')
+        self.assertEqual(about_me_btn.attrs['href'], '/about_me/')
+
+
 

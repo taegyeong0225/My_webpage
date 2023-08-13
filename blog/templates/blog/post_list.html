@@ -1,7 +1,7 @@
 {% extends 'blog/base.html' %}
 
 {% block main_area %}
-<h1>Blog</h1>
+<h1>Blog {% if category  %}<span class="badge bg-secondary">{{ category }}</span>{% endif %}</h1>
 <!-- Blog post-->
 {% if post_list.exists %}
 {% for p in post_list %}
@@ -15,7 +15,13 @@
         <div class="small text-muted">{{ p.created_at }}</div>
         <!-- 카테고리 부분 -->
         {% if p.category %}
-            <span class="badge-secondary float-right">{{ p.category }}</span>
+            {% if Category.slug == p.category %}
+                <span class="badge-secondary float-right" style="color: pink">{{ p.category }}</span>
+            {% else %}
+                <span class="badge-secondary float-right">{{ p.category }}</span>
+            {% endif %}
+        <!-- 나중에 !! 선택된 것은 다른 스타일이 적용되는 코드 넣기 -->
+
         {% else %}
             <span class="badge-secondary float-right">미분류</span>
         {% endif %}
