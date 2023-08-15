@@ -181,6 +181,39 @@ class TestView(TestCase):
         self.assertNotIn(self.post_002.title, main_area.text)
         self.assertNotIn(self.post_003.title, main_area.text)
 
+    def test_create_post(self):
+        # 로그인을 하지 않으면 status code가 200이면 안된다
+        response = self.client.get('/blog/create_post/')
+        self.assertNotEqual(response.status_code, 200)
+
+        # 로그인을 한다. self.client는 테스트 환경의 가상의 웹 브라우저, login() 함수
+        self.client.login(username='trump', password='somepassword')
+
+        response = self.client.get('/blog/create_post/')
+        self.assertEqual(response.status_code, 200)
+        soup = BeautifulSoup(response.content, 'html.parser')
+
+        self.assertEqual('Create Post - Blog', soup.title.text)
+        main_area = soup.find('div', id='main-area')
+        self.assertIn('Create New Post', main_area.text)
+
+        self.assertEqual(Post.objects.count(), 3) # test
+
+        self.client.post(
+            #  첫 번째 인수인 경로로 두 번째 인수인 딕셔너리 정보를 POST 방식(http 통신 방식)으로 보냄
+            '/blog/create_post/',
+            {
+                # Post 모델로 만든 폼은 title과 content 필드를 필수적으로 채워야 작동
+                'title' : 'Post Form 만들기',
+                'content': "Post Form 페이지를 만듭시다."
+            }
+        )
+        self.assertEqual(Post.objects.count(), 4)
+        last_post = Post.objects.last() # Post 레코드 중 마지막 레코드
+        self.assertEqual(last_post.title, "Post Form 만들기")
+        self.assertEqual(last_post.author.username, 'trump')
+
+
     def category_card_test(self, soup):
         '''
         내가 설정한 카테고리명이 카테고리 카드에 있는지 확인

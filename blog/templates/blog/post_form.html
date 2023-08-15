@@ -1,0 +1,18 @@
+{% extends 'blog/base_full_width.html' %}
+
+{% block head_title %}Create Post - Blog{% endblock %}
+
+{% block main_area %}
+  <h1>Create New Post</h1>
+  <hr/>
+  <form method="post" enctype="multipart/form-data">{% csrf_token %}
+    <!-- method="post" : 서버로 값을 보내는 방식,
+         enctype="multipart/form-data" : 파일도 같이 보내겠다는 것
+         action을 잘 쓰지 않음 -> 장고는 알아서 처리 해줌
+         {% csrf_token %} : 웹사이트를 csrf 공격으로부터 보호하기 위해 장고가 제공하는 기능, 장고 이용할 때 폼 태그 안에 넣기-->
+    <table>
+      {{ form }}
+    </table>
+    <button type="submit" class="btn btn-primary float-right">Submit</button>
+  </form>
+{% endblock %}
