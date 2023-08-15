@@ -2,8 +2,11 @@
 from django.shortcuts import render, redirect
 # 로그인했을 때만 정상적으로 페이지가 보이게 해주는 클래스
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.views.generic import ListView, DetailView, CreateView
+# CreateView, UpdateView는 모델명_form.html을 사용함
+from django.views.generic import ListView, DetailView, CreateView, UpdateView
 from .models import Post, Category, Tag
+
+from django.core.exceptions import PermissionDenied
 
 class PostList(ListView):
     # Generic view > generic display view > ListView
@@ -78,6 +81,23 @@ class PostCreate(LoginRequiredMixin, UserPassesTestMixin, CreateView):
             return super(PostCreate, self).form_valid(form)
         else:
             return redirect('/blog/')
+
+
+class PostUpdate(LoginRequiredMixin, UpdateView):
+    model = Post
+    fields = ['title', 'hook_text', 'content', 'head_image', 'file_upload', 'category', 'tags']
+
+    template_name = 'blog/post_update_form.html'
+
+    # 방문자가 웹 사이트 서버에 get 방식으로 요청했는지 post 방식으로 요청했는지 판단하는 기능
+    def dispatch(self, request, *args, **kwargs):
+        # UpdateView의 메소드 : get_object()는 Post.objects.get(pk=pk)과 같은 역할을 함
+        # Post 인스턴스(레코드)의 author 필드가 방문자와 동일한 경우에만 dispatch() 메소드가 원래 역할을 해야함
+        if request.user.is_authenticated and request.user == self.get_object().author:
+            return super(PostUpdate, self).dispatch(request, *args, **kwargs)
+        else:
+            # 권한이 없음을 나타냄, 타인의 포스트를 수정하려고 하면 403 메세지를 띄움
+            raise PermissionDenied
 
 
 def category_page(request, slug):

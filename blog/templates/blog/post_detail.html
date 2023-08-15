@@ -18,12 +18,17 @@
         <header class="mb-4">
             <!-- Post title-->
             <h1 class="fw-bolder mb-1">{{ post.title }}</h1>
+            <hr/>
             <!-- Post meta content-->
             <span class="text-muted fst-italic mb-2">
                 Posted on {{ post.created_at }} by
                 <a href="#">{{ post.author|upper }}</a>
+                {% if user.is_authenticated and user == post.author %}
+                <a class="btn btn-info btn-sm float-right" href="/blog/update_post/{{ post.pk }}/" role="button">
+                <i class="fas fa-pen"></i> Edit Post</a>
+                {% endif %}
             </span>
-
+            <hr/>
             {% if post.hook_text %}
             <h5 class="text-muted">{{ post.hook_text }}</h5>
             {% endif %}
