@@ -1,6 +1,7 @@
 # from django.shortcuts import render
 from django.shortcuts import render, redirect
-from django.contrib.auth.mixins import LoginRequiredMixin # 로그인했을 때만 정상적으로 페이지가 보이게 해주는 클래스
+# 로그인했을 때만 정상적으로 페이지가 보이게 해주는 클래스
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.views.generic import ListView, DetailView, CreateView
 from .models import Post, Category, Tag
 
@@ -56,7 +57,7 @@ class PostDetail(DetailView):
         return context
 
 
-class PostCreate(LoginRequiredMixin, CreateView):
+class PostCreate(LoginRequiredMixin, UserPassesTestMixin, CreateView):
     '''
     폼을 만드는 클래스
     fields는 장고의 폼(form) 클래스를 생성할 때 사용되는 필드들을 지정하는 속성
@@ -65,13 +66,19 @@ class PostCreate(LoginRequiredMixin, CreateView):
     model = Post
     fields = ['title', 'hook_text', 'content', 'head_image', 'file_upload', 'category']
 
+    def test_func(self):
+        return self.request.user.is_superuser or self.request.user.is_staff
+
+
     def form_valid(self, form):
         current_user = self.request.user # 방문자
-        if current_user.is_authenticated: # 로그인 상태인지 확인하는 메소드
+        # is_authenticated: 로그인 상태인지 확인하는 메소드
+        if current_user.is_authenticated and (current_user.is_staff or current_user.is_superuser):
             form.instance.author = current_user # instance :  새로 생성한 포스트
             return super(PostCreate, self).form_valid(form)
         else:
             return redirect('/blog/')
+
 
 def category_page(request, slug):
     '''

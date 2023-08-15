@@ -17,6 +17,9 @@ class TestView(TestCase):
         self.client = Client()
         self.user_trump = User.objects.create_user(username='trump', password='somepassword')
         self.user_obama = User.objects.create_user(username='obama', password='somepassword')
+        # 권한 부여
+        self.user_obama.is_staff = True
+        self.user_obama.save()
 
         self.category_programming = Category.objects.create(name='PROGRAMMING', slug='programming')
         self.category_java = Category.objects.create(name='JAVA', slug='java')
@@ -187,8 +190,11 @@ class TestView(TestCase):
         self.assertNotEqual(response.status_code, 200)
 
         # 로그인을 한다. self.client는 테스트 환경의 가상의 웹 브라우저, login() 함수
-        self.client.login(username='trump', password='somepassword')
+        self.client.login(username='trump', password='somepassword') # 일반 사용자가 로그인
+        response = self.client.get('/blog/create_post/')
+        self.assertNotEqual(response.status_code, 200)
 
+        self.client.login(username='obama', password='somepassword')  # staff가 로그인
         response = self.client.get('/blog/create_post/')
         self.assertEqual(response.status_code, 200)
         soup = BeautifulSoup(response.content, 'html.parser')
@@ -211,7 +217,7 @@ class TestView(TestCase):
         self.assertEqual(Post.objects.count(), 4)
         last_post = Post.objects.last() # Post 레코드 중 마지막 레코드
         self.assertEqual(last_post.title, "Post Form 만들기")
-        self.assertEqual(last_post.author.username, 'trump')
+        self.assertEqual(last_post.author.username, 'obama')
 
 
     def category_card_test(self, soup):
