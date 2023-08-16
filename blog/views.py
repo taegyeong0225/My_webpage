@@ -104,7 +104,7 @@ class PostCreate(LoginRequiredMixin, UserPassesTestMixin, CreateView):
 
 class PostUpdate(LoginRequiredMixin, UpdateView):
     model = Post
-    fields = ['title', 'hook_text', 'content', 'head_image', 'file_upload', 'category', 'tags']
+    fields = ['title', 'hook_text', 'content', 'head_image', 'file_upload', 'category']
 
     template_name = 'blog/post_update_form.html'
 
@@ -118,6 +118,35 @@ class PostUpdate(LoginRequiredMixin, UpdateView):
             # 권한이 없음을 나타냄, 타인의 포스트를 수정하려고 하면 403 메세지를 띄움
             raise PermissionDenied
 
+    def get_context_data(self, **kwargs): # CBV 방식에서 추가 인자 넘기기
+        context = super(PostUpdate, self).get_context_data()
+        if self.object.tags.exists():
+            tags_str_list= list()
+            for t in self.object.tags.all():
+                tags_str_list.append(t.name)
+            context['tags_str_default'] = ';'.join(tags_str_list)
+        return context
+
+
+    def form_valid(self, form):
+            response = super(PostUpdate, self).form_valid(form)
+            self.object.tags.clear()
+
+            tags_str = self.request.POST.get('tags_str')
+            if tags_str:
+                tags_str = tags_str.strip()
+
+                tags_str = tags_str.replace(',', ';')
+                tags_list = tags_str.split(';')
+
+                for t in tags_list:
+                    t = t.strip()
+                    tag, is_tag_created = Tag.objects.get_or_create(name=t)
+                    if is_tag_created:
+                        tag.slug = slugify(t, allow_unicode=True)
+                        tag.save()
+                    self.object.tags.add(tag) # 이번에 새로 만든 태그 self.object
+            return response
 
 def category_page(request, slug):
     '''
