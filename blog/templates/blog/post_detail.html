@@ -44,7 +44,8 @@
         {% endif %}
         <!-- Post content-->
         <section class="mb-5">
-            {{ post.content }}
+            <!-- models.py 있는 함수 사용, safe로 html 이스케이핑 방지-->
+            {{ post.get_content_markdown | safe }}
         </section>
 
         <!-- 태그 추가 -->
