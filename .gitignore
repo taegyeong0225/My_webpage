@@ -163,3 +163,7 @@ _media/
 
 sqlformat.exe
 django-admin.exe
+
+/node_modules
+package-lock.json
+package.json

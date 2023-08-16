@@ -42,6 +42,9 @@ INSTALLED_APPS = [
     'single_pages',
 
     'django_extensions',
+    'crispy_forms',
+    'markdownx',
+
 ]
 
 MIDDLEWARE = [
@@ -118,7 +121,7 @@ USE_TZ = False
 
 
 # Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/4.2/howto/static-files/
+# https://docs.djangoproject.com/en/4.2/howtos/static-files/
 
 STATIC_URL = 'static/'
 
@@ -129,3 +132,5 @@ MEDIA_ROOT = os.path.join(BASE_DIR, '_media')
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+CRISPY_TEMPLATE_PACK = 'bootstrap4'

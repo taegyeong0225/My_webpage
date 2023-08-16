@@ -1,5 +1,5 @@
 {% extends 'blog/base_full_width.html' %}
-
+{% load crispy_forms_tags %}
 {% block head_title %}Edit Post - Blog{% endblock %}
 
 {% block main_area %}
@@ -10,13 +10,12 @@
          enctype="multipart/form-data" : 파일도 같이 보내겠다는 것
          action을 잘 쓰지 않음 -> 장고는 알아서 처리 해줌
          {% csrf_token %} : 웹사이트를 csrf 공격으로부터 보호하기 위해 장고가 제공하는 기능, 장고 이용할 때 폼 태그 안에 넣기-->
-    <table>
-      {{ form }}
-      <tr>
-        <th><label for="id_tags_str">Tags:</label></th>
-        <td><input type="text" name="tags_str" id="id_tags_str" value="{{ tags_str_default }}"></td>
-      </tr>
-    </table>
+      {{ form | crispy }}
+      <div id="id_tags_str">
+        <label for="id_tags_str">Tags:</label>
+        <input type="text" name="tags_str" id="id_tags_tsr" class="textinput textInput form-control">
+      </div>
+      <br/>
     <button type="submit" class="btn btn-primary float-right">Submit</button>
   </form>
 {% endblock %}
