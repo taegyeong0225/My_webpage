@@ -7,6 +7,7 @@ from django.views.generic import ListView, DetailView, CreateView, UpdateView
 from .models import Post, Category, Tag
 
 from django.core.exceptions import PermissionDenied
+from django.utils.text import slugify
 
 class PostList(ListView):
     # Generic view > generic display view > ListView
@@ -78,7 +79,25 @@ class PostCreate(LoginRequiredMixin, UserPassesTestMixin, CreateView):
         # is_authenticated: 로그인 상태인지 확인하는 메소드
         if current_user.is_authenticated and (current_user.is_staff or current_user.is_superuser):
             form.instance.author = current_user # instance :  새로 생성한 포스트
-            return super(PostCreate, self).form_valid(form)
+            response = super(PostCreate, self).form_valid(form)
+            # form_valid() 함수는 폼 안에 들어온 값을 바탕으로 모델에 해당하는 인스턴스를 만들어 
+            # 데이터베이스에 저장한 다음 그 인스턴스의 경로로 리다이렉트 함, 오버라이딩해서 작성자 정보, 태그 추가
+
+            tags_str = self.request.POST.get('tags_str')
+            if tags_str:
+                tags_str = tags_str.strip()
+
+                tags_str = tags_str.replace(',', ';')
+                tags_list = tags_str.split(';')
+
+                for t in tags_list:
+                    t = t.strip()
+                    tag, is_tag_created = Tag.objects.get_or_create(name=t)
+                    if is_tag_created:
+                        tag.slug = slugify(t, allow_unicode=True)
+                        tag.save()
+                    self.object.tags.add(tag) # 이번에 새로 만든 태그 self.object
+            return response
         else:
             return redirect('/blog/')
 

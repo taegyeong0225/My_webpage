@@ -12,6 +12,10 @@
          {% csrf_token %} : 웹사이트를 csrf 공격으로부터 보호하기 위해 장고가 제공하는 기능, 장고 이용할 때 폼 태그 안에 넣기-->
     <table>
       {{ form }}
+      <tr>
+        <th><label for="id_tags_str">Tags:</label></th>
+        <td><input type="text" name="tags_str" id="id_tags_str"></td>
+      </tr>
     </table>
     <button type="submit" class="btn btn-primary float-right">Submit</button>
   </form>
