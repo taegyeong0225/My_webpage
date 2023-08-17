@@ -60,7 +60,8 @@ class Post(models.Model):
     def get_file_ext(self):
         return self.get_file_name().split('.')[-1]
 
-    
+
+    # 함수 추가는 마이그레이션 안 함
     def get_content_markdown(self):
         '''
         content 필드 값을 html로 변환하는 작업
@@ -70,5 +71,16 @@ class Post(models.Model):
         return markdown(self.content)
 
 
+class Comment(models.Model):
+    post = models.ForeignKey(Post, on_delete=models.CASCADE)
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    content = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True) # 최초 레코드 생성 시각
+    modified_at = models.DateTimeField(auto_now=True) # 업데이트 될 떄마다 변경
+
+    def __str__(self):
+        return f'{self.author}::{self.content}'
 
 
+    def get_absolute_url(self):
+        return f'{self.post.get_absolute_url()}#comment-{self.pk}'

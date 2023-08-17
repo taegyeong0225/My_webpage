@@ -1,5 +1,5 @@
 from django.contrib import admin # 관리자 페이지
-from .models import Post, Category, Tag
+from .models import Post, Category, Tag, Comment # models.py에서 import
 from markdownx.admin import MarkdownxModelAdmin
 
 class CategoryAdmin(admin.ModelAdmin):
@@ -12,3 +12,4 @@ class TagAdmin(admin.ModelAdmin):
 admin.site.register(Post, MarkdownxModelAdmin)
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(Tag, TagAdmin)
+admin.site.register(Comment)
