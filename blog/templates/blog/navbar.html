@@ -1,3 +1,5 @@
+{% load socialaccount %}
+
 <nav class="navbar navbar-expand-lg bg-body-tertiary">
         <div class="container">
         <div class="container-fluid">
@@ -16,30 +18,34 @@
               <li class="nav-item">
                 <a class="nav-link" href="/blog/">Blog</a>
               </li>
-              <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                  Dropdown
-                </a>
-                <ul class="dropdown-menu">
-                  <li><a class="dropdown-item" href="./blog_list.html">Blog</a></li>
-                  <li><a class="dropdown-item" href="#">Another action</a></li>
-                  <li><hr class="dropdown-divider"></li>
-                  <li><a class="dropdown-item" href="#">Something else here</a></li>
-                </ul>
-              </li>
               <li class="nav-item">
                 <a class="nav-link disabled" aria-disabled="true">Disabled</a>
               </li>
             </ul>
+            <ul class="navbar-nav ml-auto">
+                {% if user.is_authenticated %}
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        {{ user.username }}
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                       <a class="dropdown-item" href="/account/logout/">Log Out</a>
+                    </div>
+                </li>
+                {% else %}
+              <!--
             <form class="d-flex" role="search">
               <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
               <button class="btn btn-outline-success" type="submit">Search</button>
             </form>
             <ul class="navbar-nav ml-auto">
-              <li class="nav-item">
+              <li class="nav-item"> -->
+
                 <!-- Modal button-->
-                <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#loginModal" style="border:1px solid black; border-radius: 18%; margin: 5px;">Log In</a>
-              </li>
+                <li class="nav-item">
+                <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#loginModal">Log In</a>
+                </li>
+                {% endif %}
             </ul>
             </div>
           </div>
@@ -50,18 +56,18 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h2 class="modal-title fs-5" id="loginModalLabel"><i class="fa-solid fa-right-to-bracket"></i>&nbsp Log In</h2>
+                    <h2 class="modal-title fs-5" id="loginModalLabel"><i class="fa-solid fa-right-to-bracket"></i>&nbsp; Log In</h2>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <!-- 로그인 내용 작성 -->
                     <div class="row">
                         <div class="col-md-6">
-                            <button type="button" class="btn btn-outline-dark btn-block btn-sm"><i class="fa-brands fa-google"></i>&nbsp Log in with google</button>
-                            <button type="button" class="btn btn-outline-dark btn-block btn-sm"><i class="fa-solid fa-envelope"></i>&nbsp Log in with E-mail</button>
+                            <a role="button" class="btn btn-outline-dark btn-block btn-sm" href="{% provider_login_url 'google' %}"><i class="fa-brands fa-google"></i>&nbsp; Log in with google</a>
+                            <a href="/account/login/" role="button" class="btn btn-outline-dark btn-block btn-sm"><i class="fa-solid fa-envelope"></i>&nbsp; Log in with Username </a>
                         </div>
                         <div class="col-md-6">
-                            <button type="button" class="btn btn-outline-dark btn-block btn-sm"><i class="fa-solid fa-user-plus"></i>&nbsp Sign Up with E-mail</button>
+                            <a href="/account/signup/" role="button" class="btn btn-outline-dark btn-block btn-sm"><i class="fa-solid fa-user-plus"></i>&nbsp; Sign Up with E-mail</a>
                         </div>
                     </div>
                 </div>
