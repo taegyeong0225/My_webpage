@@ -250,6 +250,56 @@ class TestView(TestCase):
         self.assertNotIn(self.post_002.title, main_area.text)
         self.assertNotIn(self.post_003.title, main_area.text)
 
+
+    def test_comment_form(self):
+        self.assertEqual(Comment.objects.count(), 1)
+        self.assertEqual(self.post_001.comment_set.count(), 1)
+
+        # 로그인을 하지 않은 상태
+        response = self.client.get(self.post_001.get_absolute_url())
+        self.assertEqual(response.status_code, 200)
+        soup = BeautifulSoup(response.content, 'html.parser')
+
+        comment_area = soup.find('div', id='commment-area')
+        self.assertIn('Log in and leave a comment', comment_area.text)
+        self.assertFalse(comment_area.find('form', id='comment-form')) # 로그인 안 해서 보이면 안 됨
+
+        # 로그인 한 상태
+        self.client.login(username='obama', password="somepassword")
+        response = self.client.get(self.post_001.get_absolute_url())
+        self.assertEqual(response.status_code, 200)
+        soup = BeautifulSoup(response.content, 'html.parser')
+
+        comment_area = soup.find('div', id='commment-area')
+        self.assertNotIn('Log in and leave a comment', comment_area.text)
+
+        comment_form = comment_area.find('form', id='comment-form')
+        self.assertTrue(comment_form.find('textarea', id='id_content'))
+        self.assertTrue(comment_area.find('form', id='comment-form'))
+        response = self.client.post(
+            self.post_001.get_absolute_url() + 'new_comment/',
+            {
+                'content' : "오바마의 댓글입니다.",
+            },
+            follow=True
+        )
+
+        self.assertEqual(response.status_code, 200)
+
+        self.assertEqual(Comment.objects.count(), 2)
+        self.assertEqual(self.post_001.comment_set.count(), 2)
+
+        new_comment = Comment.objects.last()
+
+        soup = BeautifulSoup(response.content, 'html.parser')
+        # 포스트 상세 페이지 리다이렉트
+        self.assertIn(new_comment.post.title, soup.title.text)
+
+        comment_area = soup.find('div', id='comment-area')
+        new_comment_div = comment_area.find('div', id=f'comment-{new_comment.pk}')
+        self.assertIn('obama', new_comment_div.text)
+        self.assertIn('오바마의 댓글입니다.', new_comment_div.text)
+
     def test_create_post(self):
         # 로그인을 하지 않으면 status code가 200이면 안된다
         response = self.client.get('/blog/create_post/')
@@ -402,4 +452,12 @@ class TestView(TestCase):
         self.assertIn(self.user_obama.username.upper(), post_area.text)
         # 2.6 첫 번째 포스트의 내용(content)이 포스트 영역에 있다
         self.assertIn(self.post_001.content, post_area.text)
+
+def test_comment_update(self):
+    comment_by_trump = Comment.objects.create(
+        post=self.post_001,
+        author=self.user_trump,
+        content='트럼프의 댓글입니다.'
+    )
+
 
