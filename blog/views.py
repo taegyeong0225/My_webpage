@@ -212,44 +212,14 @@ class CommentUpdate(LoginRequiredMixin, UpdateView):
         # UpdateView의 메소드 : get_object()는 Post.objects.get(pk=pk)과 같은 역할을 함
         # Post 인스턴스(레코드)의 author 필드가 방문자와 동일한 경우에만 dispatch() 메소드가 원래 역할을 해야함
         if request.user.is_authenticated and request.user == self.get_object().author:
-            return super(PostUpdate, self).dispatch(request, *args, **kwargs)
+            return super(CommentUpdate, self).dispatch(request, *args, **kwargs)
         else:
             # 권한이 없음을 나타냄, 타인의 포스트를 수정하려고 하면 403 메세지를 띄움
             raise PermissionDenied
 
-    def get_context_data(self, **kwargs):  # CBV 방식에서 추가 인자 넘기기
-        context = super(PostUpdate, self).get_context_data()
-        if self.object.tags.exists():
-            tags_str_list = list()
-            for t in self.object.tags.all():
-                tags_str_list.append(t.name)
-            context['tags_str_default'] = ';'.join(tags_str_list)
-        return context
-
-    def form_valid(self, form):
-        response = super(PostUpdate, self).form_valid(form)
-        self.object.tags.clear()
-
-        tags_str = self.request.POST.get('tags_str')
-        if tags_str:
-            tags_str = tags_str.strip()
-
-            tags_str = tags_str.replace(',', ';')
-            tags_list = tags_str.split(';')
-
-            for t in tags_list:
-                t = t.strip()
-                tag, is_tag_created = Tag.objects.get_or_create(name=t)
-                if is_tag_created:
-                    tag.slug = slugify(t, allow_unicode=True)
-                    tag.save()
-                self.object.tags.add(tag)  # 이번에 새로 만든 태그 self.object
-        return response
-
 
 def new_comment(request, pk):
     '''
-
     로그인 확인 -> true or PermissionDenied
     포스트 방식으로 요청 받음
     :param request:

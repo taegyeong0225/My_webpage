@@ -105,23 +105,25 @@
     <div class="media mb-4" id="comment-{{ comment.pk }}">
         <img class="d-flex mr-3 rounded-circle" src="https://placehold.it/50x50" alt="{{ comment.author }}">
         <div class="media-body">
+            <!-- 로그인 해야만 수정 버튼이 보임 -->
             {% if user.is_authenticated and comment.author == user %}
             <div class="float-right">
-            {% endif %}
-                <h5 class="mt-0">
-                    {{ comment.author.username }}
-                    &nbsp;&nbsp;<small class="text-muted">{{ comment.created_at }}</small>
-                </h5>
-                <p>{{ comment.content | linebreaks }}</p>
-                {% if comment.created_at != comment.modified_at %}
-                <p class="text-muted float-right"><small>Updated: {{ comment.modified_at }}</small></p>
-                {% endif %}
                 <a role="button"
                    class="btn btn-sm btn-info"
                    id="comment-{{ comment.pk }}-update-btn"
                    href="/blog/update_comment/{{ comment.pk }}/">
                     edit
                 </a>
+            {% endif %}
+                <h5 class="mt-0">
+                    {{ comment.author.username }}
+                    &nbsp;&nbsp;<small class="text-muted">{{ comment.created_at }}</small>
+                </h5>
+                <p>{{ comment.content | linebreaks }}</p>
+                <!-- 댓글 생성 일과 수정 일이 다르면 표시 -->
+                {% if comment.created_at != comment.modified_at %}
+                <p class="text-muted float-right"><small>Updated: {{ comment.modified_at }}</small></p>
+                {% endif %}
             </div>
         </div>
         {% endfor %}
