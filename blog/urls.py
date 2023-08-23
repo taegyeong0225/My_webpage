@@ -11,6 +11,7 @@ urlpatterns = [
     path('update_post/<int:pk>/', views.PostUpdate.as_view()),
     path('update_comment/<int:pk>/', views.CommentUpdate.as_view()), # 댓글 수정 경로
     path('<int:pk>/new_comment/', views.new_comment), # 새 댓글 작성시
+    path('delete_comment/<int:pk>/', views.delete_comment),
     # path('',)
     # path('<int:pk>/', views.single_post_page),
     # path('', views.index),

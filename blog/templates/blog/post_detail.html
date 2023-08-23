@@ -1,5 +1,6 @@
 {% extends 'blog/base.html' %}
 {% load crispy_forms_tags %}
+{% load static %}
 {% block head_title %}
     {{ post.title }} - Blog
 {% endblock %}
@@ -103,29 +104,63 @@
     <!-- Single Comment -->
     <hr/>
     <div class="media mb-4" id="comment-{{ comment.pk }}">
-        <img class="d-flex mr-3 rounded-circle" src="https://placehold.it/50x50" alt="{{ comment.author }}">
-        <div class="media-body">
-            <!-- 로그인 해야만 수정 버튼이 보임 -->
-            {% if user.is_authenticated and comment.author == user %}
-            <div class="float-right">
-                <a role="button"
-                   class="btn btn-sm btn-info"
-                   id="comment-{{ comment.pk }}-update-btn"
-                   href="/blog/update_comment/{{ comment.pk }}/">
-                    edit
-                </a>
-            {% endif %}
+        <div class="media-body ml-5">
+            <div class="d-flex mr-3 rounded-circle">
+                <img class="d-flex mr-3 rounded-circle" src="https://placehold.it/50x50" alt="{{ comment.author }}">
                 <h5 class="mt-0">
                     {{ comment.author.username }}
                     &nbsp;&nbsp;<small class="text-muted">{{ comment.created_at }}</small>
                 </h5>
-                <p>{{ comment.content | linebreaks }}</p>
-                <!-- 댓글 생성 일과 수정 일이 다르면 표시 -->
-                {% if comment.created_at != comment.modified_at %}
-                <p class="text-muted float-right"><small>Updated: {{ comment.modified_at }}</small></p>
-                {% endif %}
+                <div class="media-body">
+                    <!-- 로그인 해야만 수정 버튼이 보임 -->
+                    {% if user.is_authenticated and comment.author == user %}
+                    <div class="float-right">
+                        <a role="button"
+                           class="btn btn-sm btn-info"
+                           id="comment-{{ comment.pk }}-update-btn"
+                           href="/blog/update_comment/{{ comment.pk }}/">
+                            edit
+                        </a>
+                        <!-- 삭제 버튼 -->
+                        <a role="button"
+                           href="#"
+                           id="comment-{{ comment.pk }}-delete-model-btn"
+                           class="btn btn-sm btn-danger"
+                           data-bs-toggle="modal" data-target="#deleteCommentModal-{{ comment.pk }}">
+                            delete
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <p>{{ comment.content | linebreaks }}</p>
+            <!-- 댓글 생성 일과 수정 일이 다르면 표시 -->
+            {% if comment.created_at != comment.modified_at %}
+            <p class="text-muted float-right"><small>Updated: {{ comment.modified_at }}</small></p>
+            {% endif %}
+        </div>
+            <!-- 삭제 버튼 모달 -->
+        <div class="modal fade" id="deleteCommentModal-{{ comment.pk }}" tabindex="-1" role="dialog" aria-labelledby="deleteCommentModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="deleteModalLabel">Are You Sure?</h5>
+                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <del>{{ comment | linebreaks }}</del>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <a role="button" class="btn btn-danger" href="/blog/delete_comment/{{ comment.pk }}/">Delete</a>
+                    </div>
+                </div>
             </div>
         </div>
+    </div>
         {% endfor %}
     {% endif %}
 </div>
