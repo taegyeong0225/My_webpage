@@ -4,6 +4,7 @@ from markdownx.models import MarkdownxField
 from markdownx.utils import markdown
 import os
 
+# 함수 추가시에는 migrate 안 함
 class Category(models.Model):
     name = models.CharField(max_length=50, unique=True)
     slug = models.SlugField(max_length=200, unique=True, allow_unicode=True)
@@ -84,3 +85,11 @@ class Comment(models.Model):
 
     def get_absolute_url(self):
         return f'{self.post.get_absolute_url()}#comment-{self.pk}'
+
+
+    # django-allauth
+    def get_avatar_url(self):
+        if self.author.socialaccount_set.exists():
+            return self.author.socialaccount_set.first().get_avatar_url()
+        else:
+            return 'https://doitdjango.com/avatar/id/1654/06776380671e55ee/svg/guest@email.com'
