@@ -572,3 +572,23 @@ def test_delete_comment(self):
 
     self.assertEqual(Comment.objects.count(), 1)
     self.assertEqual(self.post_001.commnet_set.count(), 1)
+
+
+def test_search(self):
+    post_about_python = Post.objects.create(
+        title='파이썬',
+        content="내용이다",
+        author=self.user_obama,
+    )
+
+    response = self.client.get('/blog/search/파이썬/')
+    self.asserEqual(response.status_code, 200)
+    soup = BeautifulSoup(response.content, 'html.parser')
+
+    main_area = soup.find('div', id='main-area')
+
+    self.assertIn('Search: 파이썬 (2)', main_area.text)
+    self.assertNotIn(self.post_001.title, main_area.text)
+    self.assertNotIn(self.post_002.title, main_area.text)
+    self.assertIn(self.post_003.title, main_area.text)
+    self.assertIn(post_about_python.title, main_area.text)

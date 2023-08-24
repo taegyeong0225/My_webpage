@@ -12,12 +12,15 @@ from django.utils.text import slugify
 from .forms import CommentForm
 from django.shortcuts import get_object_or_404 # new_comment 함수
 
+from django.db.models import Q # 검색
+
 class PostList(ListView):
     # Generic view > generic display view > ListView
     model = Post
     # template_name = 'blog/post_list.html'
     # 안 적어주면 모델_list.html로 인식, 파일명을 변경함
     ordering = '-pk'
+    paginate_by = 5
 
     # get_context_data 오버라이딩, 카테고리 파트 데이터 get
     def get_context_data(self, *, object_list=None, **kwargs):
@@ -255,3 +258,24 @@ def delete_comment(request, pk):
         return redirect(post.get_absolute_url())
     else:
         raise PermissionDenied
+
+
+class PostSearch(PostList):
+    '''
+    cbv 방식
+    '''
+    paginate_by = None
+
+    def get_queryset(self): # ListView의 속성 (model로 지정된 요소 전체를 가져오는 역할)
+        q = self.kwargs['q']
+        post_list = Post.objects.filter(
+            Q(title__contains=q) | Q(tags__name__contains=q)).distinct()
+        return post_list
+
+
+    def get_context_data(self, **kwargs):
+        context = super(PostSearch, self).get_context_data()
+        q = self.kwargs['q']
+        context['search_info'] = f'Search: {q} ({self.get_queryset().count()})'
+
+        return context
