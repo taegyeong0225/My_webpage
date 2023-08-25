@@ -1,16 +1,56 @@
 <!DOCTYPE html>
+{% load static %}
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title> My name is Gotaegyeong </title>
+    <title>About Taegyeong</title>
+
+    <link rel="stylesheet" href="{% static 'blog/bootstrap/bootstrap.min.css' %}" media="screen">
+    <script src="https://kit.fontawesome.com/e902df2198.js" crossorigin="anonymous"></script>
+
+    <link rel="stylesheet" href="{% static 'single_pages/css/about_me.css' %}" media="screen">
 </head>
 <body>
-    <nav>
-        <a href="/blog/">Blog</a>
-        <a href="/about_me/">About me</a>
-    </nav>
+{% include 'blog/navbar.html' %}
 
-<h1> 안녕하세요. 고태경입니다. </h1>
-<h2>Portfolio</h2>
+<section>
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-lg-8">
+            <h1>저는 고태경입니다.</h1>
+             <br/>
+                <p class="lead">
+                    음악과 컴퓨터를 좋아합니다.<br/>
+                </p>
+                <ul>
+                    <li>EDUCATION</li>
+                    <ul>
+                        <li>검단고등학교 (2019.3 ~ 2022.2)</li>
+                    </ul>
+                </ul>
+        </div>
+        <div class="col-lg-4">
+            <img class="img-fluid" src="{% static 'single_pages/images/배경화면.jpg'}">
+        </div>
+    </div>
+</div>
+</section>
+
+<section class="bg-=light margin-for-footer">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <h1>PORTFOLIO</h1>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="fixed-bottom">
+    {% include 'blog/footer.html' %}
+</div>
+    <!-- Bootstrap core JS-->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.min.js" integrity="sha384-Rx+T1VzGupg4BHQYs2gCW9It+akI2MM/mndMCy36UVfodzcJcF0GGLxZIzObiEfa" crossorigin="anonymous"></script>
 </body>
 </html>
