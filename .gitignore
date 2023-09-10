@@ -167,3 +167,7 @@ django-admin.exe
 /node_modules
 package-lock.json
 package.json
+
+
+.env.prod
+.env.prod.db
